@@ -1,4 +1,5 @@
 from function import *
+from Bio import SeqIO
 
 # count nucleotide
 # seq = open("data/rosalind_dna.txt", 'r').read()
@@ -11,3 +12,12 @@ from function import *
 # get reverse compiment
 # seq = open("data/rosalind_revc.txt", 'r').read()
 # reverse_compliment(seq)
+
+# recurrent relation
+# values = open("data/rosalind_fib.txt", 'r').read()
+# n, k = map(int, values.split(" "))
+# find_rabbit_pop(n, k)
+
+# gc contant
+sequences = read_fasta("data/rosalind_gc.txt")
+get_max_gc(sequences)
