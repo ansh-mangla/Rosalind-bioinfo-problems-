@@ -19,5 +19,16 @@ from Bio import SeqIO
 # find_rabbit_pop(n, k)
 
 # gc contant
-sequences = read_fasta("data/rosalind_gc.txt")
-get_max_gc(sequences)
+# sequences = read_fasta("data/rosalind_gc.txt")
+# get_max_gc(sequences)
+
+# pint mutation
+# s, t = open("data/rosalind_hamm.txt", "r").readlines()
+# point_mutation(s, t)
+
+# mendle's fist law
+with open("data/rosalind_iprb.txt", 'r') as file:
+    k, m, n = map(int, file.read().strip().split(" "))
+dom_pheno(k, m, n)
+
+# dom_pheno(k, m, n)
