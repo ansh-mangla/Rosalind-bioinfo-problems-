@@ -1,5 +1,7 @@
-from Bio import SeqIO
 import os
+from Bio import SeqIO
+import numpy as np
+import pandas as pd
 
 # for creating file
 
@@ -10,6 +12,21 @@ def save_answer(name, text: str):
     with open(file_path, 'w') as file:
         file.write(text)
     print(f"{file_path} has been saved. ")
+
+# read FASTA file
+
+
+def read_fasta(filepath, only_seqs=False):
+    sequences = []
+    if only_seqs == True:
+        for record in SeqIO.parse(filepath, 'fasta'):
+            sequences.append(str(record.seq))
+        return sequences
+
+    for record in SeqIO.parse(filepath, 'fasta'):
+        sequences.append((record.id, str(record.seq)))
+    return sequences
+
 
 #############################################
 # count number of each nucleotide in a DNA sequence
@@ -76,15 +93,6 @@ def find_rabbit_pop(n: int, k: int):
     save_answer("fib", str(rabbit[-1]))
     return rabbit[-1]
 
-# read FASTA file
-
-
-def read_fasta(filepath):
-    sequences = []
-    for record in SeqIO.parse(filepath, 'fasta'):
-        sequences.append((record.id, str(record.seq)))
-    return sequences
-
 
 ########################################################
 # calculate GC contant
@@ -121,6 +129,7 @@ def point_mutation(s: str, t: str):
     return mutations
 
 
+#####################################################
 # mendle's first law
 
 
@@ -142,3 +151,90 @@ def dom_pheno(k, m, n):
 
     save_answer("iprb", str(p))
     return p
+
+#####################################################
+# mRNA to amino acid
+
+
+def translte(seq):
+    # print(codon_aa)
+    df_c2a = pd.read_csv("resource/codon_amino_acid.csv")
+    c2a_dict = dict(zip(df_c2a["Codon"], df_c2a["aa"]))
+    aa = ''
+    for n in range(0, len(seq), 3):
+        codon = seq[n:n+3]
+        if codon in c2a_dict:
+            aa += c2a_dict[codon]
+    aa = aa.replace("Stop", "")
+    print(aa)
+    save_answer("prot", aa)
+    return aa
+
+##################################################
+# finding mortis
+
+
+def find_motifs(seq, mot):
+    """
+    Finds the motif in a sequence 
+
+
+    Args:
+    seq (str): The sequsence.
+    mot (str): the motif.  
+
+    Returns: 
+    str: the positions of the motif in the sequence. 
+
+    """
+    pos = []
+    for p in range(0, len(seq)-len(mot) + 1):
+        if seq[p:p+len(mot)] == mot:
+            pos.append(p+1)
+
+    ans = " ".join(map(str, pos))
+    save_answer("subs", ans)
+    print(ans)
+    return pos
+
+
+##############################################
+# finding consensus sequence and profile matrix
+
+def find_coensus_seq(seqs: list):
+    len_seq = len(seqs[0])
+    c_seq = ""
+
+    # converting sequences to a matrix where each row one seq
+    s = np.array([[n for n in seq] for seq in seqs])
+
+    # creating a list of dictionaries contining counts of ATGC in each position on all the strings
+    list_of_dicts = []
+    for n in range(len_seq):
+        # get the unique elemtns in each column and find counts
+        nucs, counts = np.unique(s[:, n], return_counts=True)
+        # create dicts and add them to a list
+        list_of_dicts.append(dict(zip(nucs, counts)))
+
+    # list to df but rows index = ACGT
+    profile_m = pd.DataFrame(list_of_dicts).T
+    profile_m = profile_m.loc[["A", "C", "G", "T"]]  # reoder
+    profile_m = profile_m.fillna(0).astype(int)  # NaN = 0
+
+    # getting conensus seq based on profile mtrix
+    for i in range(len_seq):
+        m = profile_m.index[profile_m[i] == profile_m[i].max()][0]
+        c_seq += str(m)
+
+    # saving answer
+
+    ans_string = profile_m.to_string(header=False)
+    for base in "ACGT":
+        ans_string = ans_string.replace(base, base+":")
+
+    ans = c_seq + "\n" + ans_string
+    print(ans)
+
+    save_answer("cons", ans)
+
+    return {"profile_matrix": profile_m, "c_seq": c_seq}
