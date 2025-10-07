@@ -45,5 +45,5 @@ from Bio import SeqIO
 
 # find_motifs(seq[0], seq[1])
 
-seqs = read_fasta("data/rosalind_cons.txt", only_seqs=True)
-find_coensus_seq(seqs)
+# seqs = read_fasta("data/rosalind_cons.txt", only_seqs=True)
+# find_coensus_seq(seqs)

@@ -3,12 +3,17 @@ from Bio import SeqIO
 import numpy as np
 import pandas as pd
 
+# directory to save answaers to 
+
 # for creating file
 
 
-def save_answer(name, text: str):
-    file_path = f"answer_file/ans_rosalind_{name}.txt"
-    os.makedirs("answer_file", exist_ok=True)
+def save_answer(name, text: str, folder="answer_file"):
+    """
+    Saves the output (text) in a file named (name) in the path (folder)
+    """
+    file_path = f"{folder}/ans_rosalind_{name}.txt"
+    os.makedirs(folder, exist_ok=True)
     with open(file_path, 'w') as file:
         file.write(text)
     print(f"{file_path} has been saved. ")
@@ -22,9 +27,10 @@ def read_fasta(filepath, only_seqs=False):
         for record in SeqIO.parse(filepath, 'fasta'):
             sequences.append(str(record.seq))
         return sequences
-
+    
+    sequences = {}
     for record in SeqIO.parse(filepath, 'fasta'):
-        sequences.append((record.id, str(record.seq)))
+        sequences[record.id] = str(record.seq)
     return sequences
 
 
@@ -48,7 +54,7 @@ def nucleotide_counter(seq: str):
 
     print(dict)  # what is returned
     print(ans)  # the answer
-    save_answer("dna", str(ans))
+    # save_answer("dna", str(ans))
     return dict
 
 #############################################
@@ -57,7 +63,7 @@ def nucleotide_counter(seq: str):
 
 def replacing_tu(seq):
     replaced = seq.replace("T", "U")
-    save_answer("rna", str(replaced))
+    # save_answer("rna", str(replaced))
     return replaced
 
 #############################################
@@ -76,7 +82,7 @@ def reverse_compliment(seq: str):
         if n in compliment:
             rev_comp += str(compliment[n])
     rev_comp = rev_comp[::-1]
-    save_answer("revc", str(rev_comp))
+    # save_answer("revc", str(rev_comp))
     return rev_comp
 
 ######################################################
@@ -90,7 +96,7 @@ def find_rabbit_pop(n: int, k: int):
             r = rabbit[-1] + k*rabbit[-2]
             rabbit.append(r)
 
-    save_answer("fib", str(rabbit[-1]))
+    # save_answer("fib", str(rabbit[-1]))
     return rabbit[-1]
 
 
@@ -111,7 +117,7 @@ def get_max_gc(sequences: list):
     max_id = max(dict, key=lambda k: dict[k])
     max_gc = max(dict.values())
     string = max_id + "\n" + str(max_gc)
-    save_answer("gc", string)
+    # save_answer("gc", string)
     return (max_id, max_gc)
 
 
@@ -125,7 +131,7 @@ def point_mutation(s: str, t: str):
         if s[n] != t[n]:
             mutations += 1
     print(mutations)
-    save_answer("hamm", str(mutations))
+    # save_answer("hamm", str(mutations))
     return mutations
 
 
@@ -149,7 +155,7 @@ def dom_pheno(k, m, n):
     p = (ic_AA + (3/4)*(ic_Aa) + ou_AA_Aa +
          ou_AA_aa + (1/2)*(ou_Aa_aa))/total_crosses
 
-    save_answer("iprb", str(p))
+    # save_answer("iprb", str(p))
     return p
 
 #####################################################
@@ -167,7 +173,7 @@ def translte(seq):
             aa += c2a_dict[codon]
     aa = aa.replace("Stop", "")
     print(aa)
-    save_answer("prot", aa)
+    # save_answer("prot", aa)
     return aa
 
 ##################################################
@@ -193,7 +199,7 @@ def find_motifs(seq, mot):
             pos.append(p+1)
 
     ans = " ".join(map(str, pos))
-    save_answer("subs", ans)
+    # save_answer("subs", ans)
     print(ans)
     return pos
 
@@ -235,6 +241,6 @@ def find_coensus_seq(seqs: list):
     ans = c_seq + "\n" + ans_string
     print(ans)
 
-    save_answer("cons", ans)
+    # save_answer("cons", ans)
 
     return {"profile_matrix": profile_m, "c_seq": c_seq}
